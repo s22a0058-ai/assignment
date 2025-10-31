@@ -2,13 +2,10 @@ import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-# Assuming 'df' is your loaded DataFrame.
-# For this example to be runnable, I'll create a placeholder DataFrame.
-# In your actual app, you would load your data here (e.g., df = pd.read_csv('your_data.csv'))
 
 # Placeholder DataFrame (Replace this section with your actual data loading)
 try:
-    df # Check if df already exists from previous steps (in a notebook environment)
+    df # Check if df already exists
 except NameError:
     data = {
         'Department': ['CS', 'EE', 'ME', 'CS', 'EE', 'ME', 'CS', 'EE', 'ME', 'CS'],
@@ -23,8 +20,27 @@ except NameError:
     }
     df = pd.DataFrame(data)
 
-# Set Streamlit page title and header
+# Set Streamlit page title and configuration
 st.set_page_config(layout="wide")
+
+# ==========================================================
+# 🎯 SIDEBAR OBJECTIVE 🎯
+# ==========================================================
+st.sidebar.header('Dashboard Objective')
+st.sidebar.markdown(
+    """
+    This dashboard provides a comprehensive **Exploratory Data Analysis (EDA)** of student academic performance data, measured by **Overall CGPA**. 
+    
+    The objective is to visualize and understand the relationships between academic outcomes and various **demographic, behavioral, and socio-economic factors** such as department, study habits (preparation, attendance), computer proficiency, lifestyle (gaming), and job status.
+    
+    Use the sections below to explore these insights.
+    """
+)
+st.sidebar.info("Data source: Simulated Academic Performance Data") # Optional: Add a little note
+
+# ==========================================================
+# MAIN PAGE CONTENT
+# ==========================================================
 st.title('📊 Academic Performance Visualization Dashboard')
 
 # ---
@@ -54,15 +70,14 @@ sns.histplot(df['Overall'], bins=10, kde=True, color=sns.color_palette('pastel')
 ax3.set_title('Distribution of Overall Performance (Overall CGPA)')
 st.pyplot(fig3)
 
-# ---
+---
 # Section 2: Study Habits and Skills
-# ---
+---
 st.header('Study Habits and Skills')
 
 # 1. Average CGPA by Computer Proficiency
 st.subheader('1. Average CGPA by Computer Proficiency')
 fig4, ax4 = plt.subplots(figsize=(8, 5))
-# Note: Replaced 'ci=None' with 'errorbar=None' for modern seaborn
 sns.barplot(x='Computer', y='Overall', data=df, estimator='mean', errorbar=None, palette='Blues_d', ax=ax4)
 ax4.set_title('Average CGPA by Computer Proficiency')
 st.pyplot(fig4)
@@ -81,9 +96,9 @@ sns.boxplot(x='Attendance_cat', y='Overall', data=df, palette='pastel', ax=ax6)
 ax6.set_title('Overall Performance by Attendance Level')
 st.pyplot(fig6)
 
-# ---
+---
 # Section 3: Lifestyle and Socio-Economic Factors
-# ---
+---
 st.header('Lifestyle and Socio-Economic Factors')
 
 # 1. Gaming Duration vs. Overall Score
