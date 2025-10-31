@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
-import numpy as np
+import plotly.express as px
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
@@ -9,27 +8,10 @@ st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
 # --- LOAD DATA ---
 @st.cache_data
 def load_data():
-    # Reading the generated sample data file
     df = pd.read_csv("ResearchInformation3_cleaned (1).csv")
     return df
 
-try:
-    df = load_data()
-except FileNotFoundError:
-    st.error("Error: The data file 'ResearchInformation3_cleaned (1).csv' was not found. Please ensure it is uploaded.")
-    st.stop()
-
-
-# Ensure categorical columns are properly ordered for better visualization
-category_orders = {
-    "Preparation_cat": ["Low", "Moderate", "High"],
-    "Attendance_cat": ["Low", "Medium", "High"],
-    "Income_cat": ["Low", "Medium", "High"],
-    "Gaming_cat": ["Low", "Moderate", "High"]
-}
-for col, order in category_orders.items():
-    if col in df.columns:
-        df[col] = pd.Categorical(df[col], categories=order, ordered=True)
+df = load_data()
 
 # --- SIDEBAR ---
 st.sidebar.title("🎯 Dashboard Navigation")
@@ -45,71 +27,45 @@ objective = st.sidebar.radio(
 )
 
 st.sidebar.divider()
-st.sidebar.markdown("📘 *Data Source:* Student Performance Metrics Dataset")
+st.sidebar.markdown("📘 *Data Source:* Student Performance Metrics Dataset (Mendeley Data, DOI: 10.17632/5b82ytz489.1)")
 
 # --- PAGE HEADER ---
 st.title("🎓 Student Performance Dashboard")
 st.markdown("An interactive visualization dashboard analyzing academic, behavioral, and lifestyle factors affecting student performance.")
-
 st.divider()
 
 # --- OBJECTIVE 1 ---
 if "Objective 1" in objective:
     st.header("📊 Objective 1: Academic Performance Overview")
-    st.write("To analyze how students’ overall academic performance (CGPA) varies across departments and gender. **Charts are interactive: hover to see data, click and drag to zoom.**")
+    st.write("To analyze how students’ overall academic performance varies across departments and gender.")
 
-    # Filter by Department & Gender
     with st.sidebar.expander("🔍 Filters for Objective 1"):
         departments = st.multiselect("Select Department", df["Department"].unique(), default=df["Department"].unique())
         genders = st.multiselect("Select Gender", df["Gender"].unique(), default=df["Gender"].unique())
-    
+
     filtered_df = df[(df["Department"].isin(departments)) & (df["Gender"].isin(genders))]
 
     col1, col2 = st.columns(2)
 
-    # Visualization 1: Department vs Overall (Interactive Bar Chart)
+    # Chart 1: Average Overall CGPA by Department
     with col1:
-        st.subheader("Average Overall CGPA by Department")
-        
-        chart1 = alt.Chart(filtered_df).mark_bar().encode(
-            x=alt.X("Department:N", axis=alt.Axis(labelAngle=-45)),
-            y=alt.Y("mean(Overall):Q", title="Average Overall CGPA"),
-            color="Department:N",
-            tooltip=["Department", alt.Tooltip("mean(Overall)", format=".2f", title="Avg CGPA")],
-            order=alt.Order("mean(Overall):Q", sort="descending")
-        ).properties(
-            title="Avg CGPA by Department"
-        ).interactive() # Enable zooming and panning
-        
-        st.altair_chart(chart1, use_container_width=True)
+        fig1 = px.bar(filtered_df, x="Department", y="Overall", color="Department",
+                      title="Average CGPA by Department", 
+                      color_discrete_sequence=px.colors.qualitative.Set2)
+        st.plotly_chart(fig1, use_container_width=True)
 
-    # Visualization 2: Gender vs Overall (Interactive Box Plot)
+    # Chart 2: Distribution by Gender
     with col2:
-        st.subheader("Distribution of Overall CGPA by Gender")
-        
-        chart2 = alt.Chart(filtered_df).mark_boxplot(extent="min-max").encode(
-            x="Gender:N",
-            y=alt.Y("Overall:Q", title="Overall CGPA"),
-            color="Gender:N",
-            tooltip=["Gender", "Overall"]
-        ).properties(
-            title="CGPA Distribution by Gender"
-        ).interactive()
-        
-        st.altair_chart(chart2, use_container_width=True)
+        fig2 = px.box(filtered_df, x="Gender", y="Overall", color="Gender",
+                      title="CGPA Distribution by Gender",
+                      color_discrete_sequence=px.colors.qualitative.Pastel)
+        st.plotly_chart(fig2, use_container_width=True)
 
-    # Visualization 3: CGPA Distribution (Interactive Histogram)
-    st.subheader("Distribution of Overall Performance")
-    
-    chart3 = alt.Chart(filtered_df).mark_bar().encode(
-        x=alt.X("Overall:Q", bin=alt.Bin(maxbins=20), title="Overall CGPA"),
-        y=alt.Y("count():Q", title="Number of Students"),
-        tooltip=[alt.Tooltip("Overall:Q", bin=True), "count():Q"]
-    ).properties(
-        title="Overall CGPA Frequency"
-    ).interactive()
-    
-    st.altair_chart(chart3, use_container_width=True)
+    # Chart 3: Overall Distribution
+    fig3 = px.histogram(filtered_df, x="Overall", nbins=10, color="Gender", 
+                        title="Distribution of Overall Performance",
+                        marginal="box", color_discrete_sequence=px.colors.qualitative.Vivid)
+    st.plotly_chart(fig3, use_container_width=True)
 
 # --- OBJECTIVE 2 ---
 elif "Objective 2" in objective:
@@ -117,57 +73,30 @@ elif "Objective 2" in objective:
     st.write("To explore how study-related factors such as computer use, preparation time, and attendance influence academic performance.")
 
     with st.sidebar.expander("🔍 Filters for Objective 2"):
-        # Note: Semester is not in the dummy data, so I'll comment it out for the runnable example
-        # semesters = st.multiselect("Select Semester", df["Semester"].unique(), default=df["Semester"].unique())
-        # filtered_df = df[df["Semester"].isin(semesters)]
-        filtered_df = df # Use all data
+        semesters = st.multiselect("Select Semester", df["Semester"].unique(), default=df["Semester"].unique())
+    filtered_df = df[df["Semester"].isin(semesters)]
 
     col1, col2 = st.columns(2)
-    
-    # Visualization 1: Computer Skill vs Overall (Interactive Box Plot)
+
+    # Chart 1: Computer Skill vs Overall
     with col1:
-        st.subheader("Computer Proficiency vs Overall Score")
-        
-        chart4 = alt.Chart(filtered_df).mark_boxplot(extent="min-max").encode(
-            x=alt.X("Computer:N", sort=["Poor", "Average", "Good", "Excellent"], title="Computer Skill"),
-            y=alt.Y("Overall:Q", title="Overall CGPA"),
-            color=alt.Color("Computer:N", sort=["Poor", "Average", "Good", "Excellent"]),
-            tooltip=["Computer", "Overall"]
-        ).properties(
-            title="CGPA by Computer Skill"
-        ).interactive()
-        
-        st.altair_chart(chart4, use_container_width=True)
+        fig1 = px.box(filtered_df, x="Computer", y="Overall", color="Computer",
+                      title="Computer Proficiency vs CGPA",
+                      color_discrete_sequence=px.colors.sequential.Plasma)
+        st.plotly_chart(fig1, use_container_width=True)
 
-    # Visualization 2: Preparation Time vs Average CGPA (Interactive Bar Chart)
+    # Chart 2: Preparation vs CGPA
     with col2:
-        st.subheader("Preparation Time vs Average CGPA")
-        
-        chart5 = alt.Chart(filtered_df).mark_bar().encode(
-            x=alt.X("Preparation_cat:N", title="Preparation Time", sort=category_orders["Preparation_cat"]),
-            y=alt.Y("mean(Overall):Q", title="Average Overall CGPA"),
-            color=alt.Color("Preparation_cat:N", sort=category_orders["Preparation_cat"]),
-            tooltip=["Preparation_cat", alt.Tooltip("mean(Overall)", format=".2f", title="Avg CGPA")]
-        ).properties(
-            title="Avg CGPA by Preparation Time"
-        ).interactive()
-        
-        st.altair_chart(chart5, use_container_width=True)
+        fig2 = px.bar(filtered_df, x="Preparation_cat", y="Overall", color="Preparation_cat",
+                      title="Preparation Time vs Average CGPA", 
+                      color_discrete_sequence=px.colors.qualitative.Safe)
+        st.plotly_chart(fig2, use_container_width=True)
 
-    # Visualization 3: Attendance vs CGPA (Interactive Box Plot)
-    st.subheader("Attendance vs Overall CGPA")
-    
-    chart6 = alt.Chart(filtered_df).mark_boxplot(extent="min-max").encode(
-        x=alt.X("Attendance_cat:N", title="Attendance", sort=category_orders["Attendance_cat"]),
-        y=alt.Y("Overall:Q", title="Overall CGPA"),
-        color=alt.Color("Attendance_cat:N", sort=category_orders["Attendance_cat"]),
-        tooltip=["Attendance_cat", "Overall"]
-    ).properties(
-        title="CGPA Distribution by Attendance"
-    ).interactive()
-    
-    st.altair_chart(chart6, use_container_width=True)
-
+    # Chart 3: Attendance vs CGPA
+    fig3 = px.box(filtered_df, x="Attendance_cat", y="Overall", color="Attendance_cat",
+                  title="Attendance vs Overall CGPA",
+                  color_discrete_sequence=px.colors.diverging.Tealrose)
+    st.plotly_chart(fig3, use_container_width=True)
 
 # --- OBJECTIVE 3 ---
 elif "Objective 3" in objective:
@@ -176,37 +105,30 @@ elif "Objective 3" in objective:
 
     with st.sidebar.expander("🔍 Filters for Objective 3"):
         incomes = st.multiselect("Select Income Level", df["Income_cat"].dropna().unique(), default=df["Income_cat"].dropna().unique())
-    
     filtered_df = df[df["Income_cat"].isin(incomes)]
 
     col1, col2 = st.columns(2)
 
-    # Visualization 1: Gaming vs CGPA (Interactive Bar Chart)
+    # Chart 1: Gaming vs CGPA
     with col1:
-        st.subheader("Gaming Duration vs Overall Performance")
-        
-        chart7 = alt.Chart(filtered_df).mark_bar().encode(
-            x=alt.X("Gaming_cat:N", title="Gaming Duration", sort=category_orders["Gaming_cat"]),
-            y=alt.Y("mean(Overall):Q", title="Average Overall CGPA"),
-            color=alt.Color("Gaming_cat:N", sort=category_orders["Gaming_cat"]),
-            tooltip=["Gaming_cat", alt.Tooltip("mean(Overall)", format=".2f", title="Avg CGPA")]
-        ).properties(
-            title="Avg CGPA by Gaming Duration"
-        ).interactive()
-        
-        st.altair_chart(chart7, use_container_width=True)
+        fig1 = px.bar(filtered_df, x="Gaming_cat", y="Overall", color="Gaming_cat",
+                      title="Gaming Duration vs CGPA",
+                      color_discrete_sequence=px.colors.qualitative.Vivid)
+        st.plotly_chart(fig1, use_container_width=True)
 
-    # Visualization 2: Income vs CGPA (Interactive Box Plot)
+    # Chart 2: Income vs CGPA
     with col2:
-        st.subheader("Family Income vs Overall CGPA")
-        
-        chart8 = alt.Chart(filtered_df).mark_boxplot(extent="min-max").encode(
-            x=alt.X("Income_cat:N", title="Income Level", sort=category_orders["Income_cat"]),
-            y=alt.Y("Overall:Q", title="Overall CGPA"),
-            color=alt.Color("Income_cat:N", sort=category_orders["Income_cat"]),
-            tooltip=["Income_cat", "Overall"]
-        ).properties(
-            title="CGPA Distribution by Income"
-        ).interactive()
-        
-        st.altair_chart(chart8, use_container_width=True)
+        fig2 = px.box(filtered_df, x="Income_cat", y="Overall", color="Income_cat",
+                      title="Income vs CGPA",
+                      color_discrete_sequence=px.colors.qualitative.Bold)
+        st.plotly_chart(fig2, use_container_width=True)
+
+    # Chart 3: Job Status vs CGPA
+    fig3 = px.bar(filtered_df, x="Job", y="Overall", color="Job",
+                  title="Part-time Job vs CGPA",
+                  color_discrete_sequence=px.colors.qualitative.Prism)
+    st.plotly_chart(fig3, use_container_width=True)
+
+# --- FOOTER ---
+st.divider()
+st.markdown("👩‍💻 Developed using Python, Pandas, Plotly, and Streamlit.")
