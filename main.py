@@ -12,7 +12,7 @@ st.markdown("This dashboard visualizes relationships between academic performanc
 # --- LOAD DATA ---
 @st.cache_data
 def load_data():
-    df = pd.read_csv("/content/ResearchInformation3_cleaned.csv")
+    df = pd.read_csv("ResearchInformation3_cleaned (1).csv")
     return df
 
 df = load_data()
