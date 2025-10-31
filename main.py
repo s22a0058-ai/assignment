@@ -10,13 +10,13 @@ st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
 @st.cache_data
 def load_data():
     # Reading the generated sample data file
-    df = pd.read_csv("student_data.csv")
+    df = pd.read_csv("ResearchInformation3_cleaned (1).csv")
     return df
 
 try:
     df = load_data()
 except FileNotFoundError:
-    st.error("Error: The data file 'student_data.csv' was not found. Please ensure it is uploaded.")
+    st.error("Error: The data file 'ResearchInformation3_cleaned (1).csv' was not found. Please ensure it is uploaded.")
     st.stop()
 
 
