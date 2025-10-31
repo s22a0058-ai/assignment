@@ -9,7 +9,7 @@ st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
 # --- LOAD DATA ---
 @st.cache_data
 def load_data():
-    df = pd.read_csv("/content/ResearchInformation3_cleaned(1).csv")
+    df = pd.read_csv("ResearchInformation3_cleaned (1).csv")
     return df
 
 df = load_data()
