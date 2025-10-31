@@ -1,125 +1,113 @@
 import streamlit as st
-import seaborn as sns
-import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.express as px
 
-# Placeholder DataFrame (Replace this section with your actual data loading)
-try:
-    df # Check if df already exists
-except NameError:
-    data = {
-        'Department': ['CS', 'EE', 'ME', 'CS', 'EE', 'ME', 'CS', 'EE', 'ME', 'CS'],
-        'Overall': [3.5, 3.2, 2.8, 3.8, 3.0, 2.5, 3.6, 3.4, 2.9, 3.7],
-        'Gender': ['Male', 'Female', 'Male', 'Female', 'Male', 'Female', 'Male', 'Female', 'Male', 'Female'],
-        'Computer': ['Good', 'Excellent', 'Average', 'Excellent', 'Good', 'Average', 'Excellent', 'Good', 'Average', 'Excellent'],
-        'Preparation_cat': ['High', 'Low', 'Medium', 'High', 'Low', 'Medium', 'High', 'Low', 'Medium', 'High'],
-        'Attendance_cat': ['High', 'Medium', 'Low', 'High', 'Medium', 'Low', 'High', 'Medium', 'Low', 'High'],
-        'Gaming_cat': ['Low', 'High', 'Medium', 'Low', 'High', 'Medium', 'Low', 'High', 'Medium', 'Low'],
-        'Income_cat': ['High', 'Low', 'Medium', 'High', 'Low', 'Medium', 'High', 'Low', 'Medium', 'High'],
-        'Job': ['No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'Yes'],
-    }
-    df = pd.DataFrame(data)
+# --- PAGE SETUP ---
+st.set_page_config(page_title="Academic Performance Dashboard", layout="wide")
 
-# Set Streamlit page title and configuration
-st.set_page_config(layout="wide")
+# --- LOAD DATA ---
+# Replace with your actual CSV
+@st.cache_data
+def load_data():
+    # Example placeholder (replace with your actual data file)
+    df = pd.read_csv("ResearchInformation3_cleaned.csv")
+    return df
 
-# ==========================================================
-# 🎯 SIDEBAR OBJECTIVE 🎯
-# ==========================================================
-st.sidebar.header('Dashboard Objective')
-st.sidebar.markdown(
-    """
-    This dashboard provides a comprehensive **Exploratory Data Analysis (EDA)** of student academic performance data, measured by **Overall CGPA**. 
-    
-    The objective is to visualize and understand the relationships between academic outcomes and various **demographic, behavioral, and socio-economic factors** such as department, study habits (preparation, attendance), computer proficiency, lifestyle (gaming), and job status.
-    
-    Use the sections below to explore these insights.
-    """
-)
-st.sidebar.info("Data source: Simulated Academic Performance Data") # Optional: Add a little note
+df = load_data()
 
-# ==========================================================
-# MAIN PAGE CONTENT
-# ==========================================================
-st.title('📊 Academic Performance Visualization Dashboard')
+# --- PAGE HEADER ---
+st.title("🎓 Academic Performance Visualization Dashboard")
+st.markdown("An interactive dashboard exploring academic, behavioral, and lifestyle factors affecting student performance.")
+st.divider()
 
-# ---
-# Section 1: Core Performance Metrics
-# ---
-st.header('Core Performance Metrics')
+# ==============================
+# SECTION 1: CORE PERFORMANCE
+# ==============================
+st.header("📊 Core Performance Metrics")
+col1, col2 = st.columns(2)
 
 # 1. Average Overall Score by Department
-st.subheader('1. Average Overall Score by Department')
-fig1, ax1 = plt.subplots(figsize=(10, 5))
-sns.barplot(x='Department', y='Overall', data=df, estimator='mean', errorbar=None, palette='pastel', ax=ax1)
-ax1.set_xticklabels(ax1.get_xticklabels(), rotation=45)
-ax1.set_title('Average Overall Score by Department')
-st.pyplot(fig1)
+with col1:
+    fig1 = px.bar(df, x="Department", y="Overall", color="Department",
+                  title="Average Overall Score by Department",
+                  color_discrete_sequence=px.colors.qualitative.Set2)
+    fig1.update_layout(height=400)
+    st.plotly_chart(fig1, use_container_width=True)
 
 # 2. CGPA by Gender
-st.subheader('2. Distribution of Overall Scores by Gender')
-fig2, ax2 = plt.subplots(figsize=(8, 5))
-sns.boxplot(x='Gender', y='Overall', data=df, palette='pastel', ax=ax2)
-ax2.set_title('Distribution of Overall Scores by Gender')
-st.pyplot(fig2)
+with col2:
+    fig2 = px.box(df, x="Gender", y="Overall", color="Gender",
+                  title="Distribution of Overall Scores by Gender",
+                  color_discrete_sequence=px.colors.qualitative.Pastel)
+    fig2.update_layout(height=400)
+    st.plotly_chart(fig2, use_container_width=True)
 
 # 3. Distribution of Overall Scores
-st.subheader('3. Distribution of Overall Performance (Overall CGPA)')
-fig3, ax3 = plt.subplots(figsize=(8, 5))
-sns.histplot(df['Overall'], bins=10, kde=True, color=sns.color_palette('pastel')[0], ax=ax3)
-ax3.set_title('Distribution of Overall Performance (Overall CGPA)')
-st.pyplot(fig3)
+fig3 = px.histogram(df, x="Overall", nbins=10, color="Gender",
+                    title="Distribution of Overall Performance (Overall CGPA)",
+                    color_discrete_sequence=px.colors.qualitative.Vivid,
+                    marginal="box")
+fig3.update_layout(height=400)
+st.plotly_chart(fig3, use_container_width=True)
 
----
-# Section 2: Study Habits and Skills
----
-st.header('Study Habits and Skills')
+# ==============================
+# SECTION 2: STUDY HABITS
+# ==============================
+st.header("💻 Study Habits and Skills")
+col3, col4 = st.columns(2)
 
 # 1. Average CGPA by Computer Proficiency
-st.subheader('1. Average CGPA by Computer Proficiency')
-fig4, ax4 = plt.subplots(figsize=(8, 5))
-sns.barplot(x='Computer', y='Overall', data=df, estimator='mean', errorbar=None, palette='Blues_d', ax=ax4)
-ax4.set_title('Average CGPA by Computer Proficiency')
-st.pyplot(fig4)
+with col3:
+    fig4 = px.bar(df, x="Computer", y="Overall", color="Computer",
+                  title="Average CGPA by Computer Proficiency",
+                  color_discrete_sequence=px.colors.qualitative.Bold)
+    fig4.update_layout(height=400)
+    st.plotly_chart(fig4, use_container_width=True)
 
 # 2. Preparation Time vs. Average Overall Score
-st.subheader('2. Average Overall Score by Preparation Time')
-fig5, ax5 = plt.subplots(figsize=(8, 5))
-sns.barplot(x='Preparation_cat', y='Overall', data=df, estimator='mean', errorbar=None, palette='pastel', ax=ax5)
-ax5.set_title('Average Overall Score by Preparation Time')
-st.pyplot(fig5)
+with col4:
+    fig5 = px.bar(df, x="Preparation_cat", y="Overall", color="Preparation_cat",
+                  title="Average Overall Score by Preparation Time",
+                  color_discrete_sequence=px.colors.qualitative.Safe)
+    fig5.update_layout(height=400)
+    st.plotly_chart(fig5, use_container_width=True)
 
 # 3. Attendance vs. Overall Score
-st.subheader('3. Overall Performance by Attendance Level')
-fig6, ax6 = plt.subplots(figsize=(8, 5))
-sns.boxplot(x='Attendance_cat', y='Overall', data=df, palette='pastel', ax=ax6)
-ax6.set_title('Overall Performance by Attendance Level')
-st.pyplot(fig6)
+fig6 = px.box(df, x="Attendance_cat", y="Overall", color="Attendance_cat",
+              title="Overall Performance by Attendance Level",
+              color_discrete_sequence=px.colors.diverging.Tealrose)
+fig6.update_layout(height=400)
+st.plotly_chart(fig6, use_container_width=True)
 
----
-# Section 3: Lifestyle and Socio-Economic Factors
----
-st.header('Lifestyle and Socio-Economic Factors')
+# ==============================
+# SECTION 3: LIFESTYLE & SOCIO-ECONOMIC FACTORS
+# ==============================
+st.header("🕹️ Lifestyle and Socio-Economic Factors")
+col5, col6 = st.columns(2)
 
 # 1. Gaming Duration vs. Overall Score
-st.subheader('1. Average Overall Score by Gaming Duration')
-fig7, ax7 = plt.subplots(figsize=(8, 5))
-sns.barplot(x='Gaming_cat', y='Overall', data=df, estimator='mean', errorbar=None, palette='pastel', ax=ax7)
-ax7.set_title('Average Overall Score by Gaming Duration')
-st.pyplot(fig7)
+with col5:
+    fig7 = px.bar(df, x="Gaming_cat", y="Overall", color="Gaming_cat",
+                  title="Average Overall Score by Gaming Duration",
+                  color_discrete_sequence=px.colors.qualitative.Vivid)
+    fig7.update_layout(height=400)
+    st.plotly_chart(fig7, use_container_width=True)
 
 # 2. Income vs. Overall Score
-st.subheader('2. Overall Performance by Family Income Level')
-fig8, ax8 = plt.subplots(figsize=(8, 5))
-sns.boxplot(x='Income_cat', y='Overall', data=df, palette='pastel', ax=ax8)
-ax8.set_title('Overall Performance by Family Income Level')
-st.pyplot(fig8)
+with col6:
+    fig8 = px.box(df, x="Income_cat", y="Overall", color="Income_cat",
+                  title="Overall Performance by Family Income Level",
+                  color_discrete_sequence=px.colors.qualitative.Prism)
+    fig8.update_layout(height=400)
+    st.plotly_chart(fig8, use_container_width=True)
 
 # 3. Job Status vs. Overall Score
-st.subheader('3. Comparison of Academic Performance by Job Status')
-fig9, ax9 = plt.subplots(figsize=(8, 5))
-sns.barplot(x='Job', y='Overall', data=df, estimator='mean', errorbar=None, palette='pastel', ax=ax9)
-ax9.set_title('Comparison of Academic Performance by Job Status')
-st.pyplot(fig9)
+fig9 = px.bar(df, x="Job", y="Overall", color="Job",
+              title="Comparison of Academic Performance by Job Status",
+              color_discrete_sequence=px.colors.qualitative.Pastel1)
+fig9.update_layout(height=400)
+st.plotly_chart(fig9, use_container_width=True)
 
-# End of Streamlit app
+# --- FOOTER ---
+st.divider()
+st.markdown("👩‍💻 Developed using Python, Pandas, Plotly, and Streamlit.")
