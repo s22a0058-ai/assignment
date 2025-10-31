@@ -139,6 +139,3 @@ elif "Objective 3" in objective:
                   color_discrete_sequence=px.colors.qualitative.Pastel1)
     st.plotly_chart(fig9, use_container_width=True)
 
-# --- FOOTER ---
-st.divider()
-st.mark
