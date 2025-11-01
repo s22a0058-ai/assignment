@@ -13,6 +13,11 @@ def load_data():
 
 df = load_data()
 
+# --- PAGE HEADER ---
+st.title("🎓 Student Performance Dashboard")
+st.markdown("An interactive visualization dashboard analyzing academic, behavioral, and lifestyle factors affecting student performance.")
+st.divider()
+
 # --- SUMMARY BOX SECTION ---
 st.subheader("📦 Summary Statistics")
 
@@ -55,11 +60,6 @@ objective = st.sidebar.radio(
 
 st.sidebar.divider()
 st.sidebar.markdown("📘 *Data Source:* Student Performance Metrics Dataset (Mendeley Data, DOI: 10.17632/5b82ytz489.1)")
-
-# --- PAGE HEADER ---
-st.title("🎓 Student Performance Dashboard")
-st.markdown("An interactive visualization dashboard analyzing academic, behavioral, and lifestyle factors affecting student performance.")
-st.divider()
 
 # =====================================================================
 # OBJECTIVE 1: Academic Performance
