@@ -16,13 +16,22 @@ df = load_data()
 # --- SUMMARY BOX SECTION ---
 st.subheader("📦 Summary Statistics")
 
+# Calculate gender counts safely (in case Gender column missing or empty)
+if "Gender" in filtered_df.columns:
+    male_count = filtered_df[filtered_df["Gender"].str.lower() == "male"].shape[0]
+    female_count = filtered_df[filtered_df["Gender"].str.lower() == "female"].shape[0]
+else:
+    male_count = female_count = 0
+
 col1, col2, col3, col4, col5 = st.columns(5)
 
 col1.metric("👥 Total Students", f"{df.shape[0]}")
-col2.metric("📈 Average CGPA", f"{df['Overall'].mean():.2f}")
-col3.metric("🏆 Highest CGPA", f"{df['Overall'].max():.2f}")
-col4.metric("📉 Lowest CGPA", f"{df['Overall'].min():.2f}")
-col5.metric("🏫 Most Common Department", df['Department'].mode()[0])
+col2.metric("🚹 Total Male", f"{male_count}")
+col3.metric("🚺 Total Female", f"{female_count}")
+col4.metric("📈 Average CGPA", f"{df['Overall'].mean():.2f}")
+col5.metric("🏆 Highest CGPA", f"{df['Overall'].max():.2f}")
+col6.metric("📉 Lowest CGPA", f"{df['Overall'].min():.2f}")
+col7.metric("🏫 Most Common Department", df['Department'].mode()[0])
 
 st.markdown("---")
 
