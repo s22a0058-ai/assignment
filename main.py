@@ -158,3 +158,8 @@ st.subheader("🗂️ Raw Data Preview")
 with st.expander("Click to view dataset"):
     st.dataframe(df.head(20))  # show first 20 rows
     st.caption("Showing first 20 rows. You can scroll horizontally to view all columns.")
+
+
+# --- FOOTER ---
+st.divider()
+st.markdown("👩‍💻 Developed using Python, Pandas, Plotly, and Streamlit.")
