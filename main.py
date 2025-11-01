@@ -23,7 +23,7 @@ if "Gender" in df.columns:
 else:
     male_count = female_count = 0
 
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
 col1.metric("👥 Total Students", f"{df.shape[0]}")
 col2.metric("🚹 Total Male", f"{male_count}")
