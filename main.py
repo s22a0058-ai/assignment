@@ -5,6 +5,14 @@ import plotly.express as px
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
 
+# --- LOAD DATA ---
+@st.cache_data
+def load_data():
+    df = pd.read_csv("ResearchInformation3_cleaned.csv")
+    return df
+
+df = load_data()
+
 # --- SUMMARY BOX SECTION ---
 st.subheader("📦 Summary Statistics")
 
@@ -24,14 +32,6 @@ st.subheader("🗂️ Raw Data Preview")
 with st.expander("Click to view dataset"):
     st.dataframe(df.head(20))  # show first 20 rows
     st.caption("Showing first 20 rows. You can scroll horizontally to view all columns.")
-
-# --- LOAD DATA ---
-@st.cache_data
-def load_data():
-    df = pd.read_csv("ResearchInformation3_cleaned.csv")
-    return df
-
-df = load_data()
 
 # --- SIDEBAR NAVIGATION ---
 st.sidebar.title("🎯 Dashboard Navigation")
