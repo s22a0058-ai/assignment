@@ -16,10 +16,10 @@ df = load_data()
 # --- SUMMARY BOX SECTION ---
 st.subheader("📦 Summary Statistics")
 
-# Calculate gender counts safely (in case Gender column missing or empty)
-if "Gender" in filtered_df.columns:
-    male_count = filtered_df[filtered_df["Gender"].str.lower() == "male"].shape[0]
-    female_count = filtered_df[filtered_df["Gender"].str.lower() == "female"].shape[0]
+# Calculate gender counts safely for full dataset
+if "Gender" in df.columns:
+    male_count = df[df["Gender"].str.lower() == "male"].shape[0]
+    female_count = df[df["Gender"].str.lower() == "female"].shape[0]
 else:
     male_count = female_count = 0
 
