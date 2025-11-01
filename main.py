@@ -5,6 +5,26 @@ import plotly.express as px
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Student Performance Dashboard", layout="wide")
 
+# --- SUMMARY BOX SECTION ---
+st.subheader("📦 Summary Statistics")
+
+col1, col2, col3, col4, col5 = st.columns(5)
+
+col1.metric("👥 Total Students", f"{df.shape[0]}")
+col2.metric("📈 Average CGPA", f"{df['Overall'].mean():.2f}")
+col3.metric("🏆 Highest CGPA", f"{df['Overall'].max():.2f}")
+col4.metric("📉 Lowest CGPA", f"{df['Overall'].min():.2f}")
+col5.metric("🏫 Most Common Department", df['Department'].mode()[0])
+
+st.markdown("---")
+
+# --- RAW DATA PREVIEW SECTION ---
+st.subheader("🗂️ Raw Data Preview")
+
+with st.expander("Click to view dataset"):
+    st.dataframe(df.head(20))  # show first 20 rows
+    st.caption("Showing first 20 rows. You can scroll horizontally to view all columns.")
+
 # --- LOAD DATA ---
 @st.cache_data
 def load_data():
@@ -138,27 +158,6 @@ elif "Objective 3" in objective:
                   title="Comparison of Academic Performance by Job Status",
                   color_discrete_sequence=px.colors.qualitative.Pastel1)
     st.plotly_chart(fig9, use_container_width=True)
-
-# --- SUMMARY BOX SECTION ---
-st.subheader("📦 Summary Statistics")
-
-col1, col2, col3, col4, col5 = st.columns(5)
-
-col1.metric("👥 Total Students", f"{df.shape[0]}")
-col2.metric("📈 Average CGPA", f"{df['Overall'].mean():.2f}")
-col3.metric("🏆 Highest CGPA", f"{df['Overall'].max():.2f}")
-col4.metric("📉 Lowest CGPA", f"{df['Overall'].min():.2f}")
-col5.metric("🏫 Most Common Department", df['Department'].mode()[0])
-
-st.markdown("---")
-
-# --- RAW DATA PREVIEW SECTION ---
-st.subheader("🗂️ Raw Data Preview")
-
-with st.expander("Click to view dataset"):
-    st.dataframe(df.head(20))  # show first 20 rows
-    st.caption("Showing first 20 rows. You can scroll horizontally to view all columns.")
-
 
 # --- FOOTER ---
 st.divider()
