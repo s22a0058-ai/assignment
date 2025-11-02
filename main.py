@@ -38,6 +38,15 @@ col5.metric("🏆 Highest CGPA", f"{df['Overall'].max():.2f}")
 col6.metric("📉 Lowest CGPA", f"{df['Overall'].min():.2f}")
 col7.metric("🏫 Most Common Department", df['Department'].mode()[0])
 
+st.write("""An overview of the student dataset is given by the summary statistics above. 
+ Students from several departments are represented overall, and the distribution of male and female participants is almost equal. 
+ According to the average CGPA, the majority of students score in the moderate to high academic category, showing generally high levels of success. 
+ The performance disparity between students, which may be impacted by behavioral, academic, or socioeconomic variables, is highlighted by the greatest and lowest CGPA numbers. 
+ The most popular department indicates where most students are concentrated, which may be a reflection of enrollment patterns or institutional focus. 
+ Before delving into more in-depth visual analyses in later parts, these statistics provide a basic overview of the dataset's structure and overall academic achievement.""")
+ 
+
+
 st.markdown("---")
 
 # --- RAW DATA PREVIEW SECTION ---
@@ -83,6 +92,7 @@ if "Objective 1" in objective:
                       title="Average CGPA by Department",
                       color_discrete_sequence=px.colors.qualitative.Set2)
         st.plotly_chart(fig1, use_container_width=True)
+        st.caption("🔍 Observation: Students from the Computer Science department achieved the highest average CGPA, suggesting program-level and institutional influences on performance.")
 
     # Chart 2: CGPA Distribution by Gender
     with col2:
@@ -90,6 +100,7 @@ if "Objective 1" in objective:
                       title="Distribution of CGPA by Gender",
                       color_discrete_sequence=px.colors.qualitative.Pastel)
         st.plotly_chart(fig2, use_container_width=True)
+         st.caption("📊 Observation: Female students show slightly higher median CGPAs, though overall gender performance is balanced — reflecting equitable academic achievement.")
 
     # Chart 3: Distribution of Overall CGPA
     fig3 = px.histogram(filtered_df, x="Overall", nbins=10, color="Gender",
@@ -97,6 +108,8 @@ if "Objective 1" in objective:
                         color_discrete_sequence=px.colors.qualitative.Vivid,
                         marginal="box")
     st.plotly_chart(fig3, use_container_width=True)
+    st.caption("📈 Observation: The CGPA distribution is right-skewed, with most students achieving moderate to high performance (3.0–3.7). Few students fall below average, indicating generally strong academic achievement.")
+
 
 # =====================================================================
 # OBJECTIVE 2: Study & Learning Behavior
@@ -119,6 +132,8 @@ elif "Objective 2" in objective:
                       title="Average CGPA by Computer Proficiency",
                       color_discrete_sequence=px.colors.qualitative.Bold)
         st.plotly_chart(fig4, use_container_width=True)
+        st.caption("💡 Observation: Students with higher computer proficiency consistently score higher CGPAs. This supports the relationship between digital literacy and academic success in technology-supported learning environments.")
+
 
     # Chart 2: Preparation Time vs CGPA
     with col2:
@@ -126,12 +141,16 @@ elif "Objective 2" in objective:
                       title="Average Overall Score by Preparation Time",
                       color_discrete_sequence=px.colors.qualitative.Safe)
         st.plotly_chart(fig5, use_container_width=True)
+        st.caption("📘 Observation: Students who spend more time preparing for assessments achieve higher average CGPAs, confirming that consistent study time improves academic performance.")
+
 
     # Chart 3: Attendance vs CGPA
     fig6 = px.box(filtered_df, x="Attendance_cat", y="Overall", color="Attendance_cat",
                   title="Overall Performance by Attendance Level",
                   color_discrete_sequence=px.colors.diverging.Tealrose)
     st.plotly_chart(fig6, use_container_width=True)
+    st.caption("📅 Observation: Higher attendance correlates with higher CGPAs, reinforcing that consistent class participation enhances understanding and academic results.")
+
 
 # =====================================================================
 # OBJECTIVE 3: Lifestyle & Socio-Economic Factors
@@ -154,6 +173,8 @@ elif "Objective 3" in objective:
                       title="Average Overall Score by Gaming Duration",
                       color_discrete_sequence=px.colors.qualitative.Vivid)
         st.plotly_chart(fig7, use_container_width=True)
+        st.caption("🎮 Observation: Students with low to moderate gaming time perform better academically. Excessive gaming may reduce study focus, slightly lowering performance.")
+
 
     # Chart 2: Income vs CGPA
     with col2:
@@ -161,12 +182,16 @@ elif "Objective 3" in objective:
                       title="Overall Performance by Family Income Level",
                       color_discrete_sequence=px.colors.qualitative.Prism)
         st.plotly_chart(fig8, use_container_width=True)
+        st.caption("💰 Observation: Students from medium-income families tend to achieve the highest CGPAs, suggesting a balanced access to resources and stable study environments.")
+
 
     # Chart 3: Job vs CGPA
     fig9 = px.bar(filtered_df, x="Job", y="Overall", color="Job",
                   title="Comparison of Academic Performance by Job Status",
                   color_discrete_sequence=px.colors.qualitative.Pastel1)
     st.plotly_chart(fig9, use_container_width=True)
+    st.caption("👔 Observation: Students without part-time jobs achieve slightly higher CGPAs. Working students may face time constraints that limit study hours, affecting overall performance.")
+
 
 # --- FOOTER ---
 st.divider()
