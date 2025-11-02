@@ -100,7 +100,7 @@ if "Objective 1" in objective:
                       title="Distribution of CGPA by Gender",
                       color_discrete_sequence=px.colors.qualitative.Pastel)
         st.plotly_chart(fig2, use_container_width=True)
-         st.caption("📊 Observation: Female students show slightly higher median CGPAs, though overall gender performance is balanced — reflecting equitable academic achievement.")
+        st.caption("📊 Observation: Female students show slightly higher median CGPAs, though overall gender performance is balanced — reflecting equitable academic achievement.")
 
     # Chart 3: Distribution of Overall CGPA
     fig3 = px.histogram(filtered_df, x="Overall", nbins=10, color="Gender",
